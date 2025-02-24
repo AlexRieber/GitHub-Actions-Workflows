@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Testpaper.qmd' #Trigger only when the paper changed
+      - 'Introduction.qmd'
 
 jobs:
   render_quarto:
@@ -26,6 +27,28 @@ jobs:
           # Send responses one by one using sequential echo commands
           { echo ""; sleep 1; echo "yes"; sleep 1; echo "yes"; sleep 1; echo "no"; } | quarto install extension mikemahoney218/quarto-arxiv
           
-      - name: Render Testpaper.qmd
+      - name: Detect Changed QMD Files
+        id: detect_changes
         run: |
-          quarto render Testpaper.qmd --to pdf
+          # Find common ancestor between HEAD and main
+          BASE_COMMIT=$(git merge-base origin/main HEAD)
+          echo "Base commit for comparison: $BASE_COMMIT"
+
+          # Gather changed files in 'paper/' that match either QMD name
+          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT HEAD -- 'paper/Testpaper.qmd' 'paper/introduction.qmd' | tr '\n' ' ')
+
+          if [[ -n "$CHANGED_FILES" ]]; then
+            echo "Changed QMD files: $CHANGED_FILES"
+            echo "qmd_files=$CHANGED_FILES" >> $GITHUB_ENV
+          else
+            echo "No QMD changes detected."
+            echo "qmd_files=" >> $GITHUB_ENV
+          fi
+
+      - name: Render Changed QMD Files
+        if: env.qmd_files != ''
+        run: |
+          for file in ${{ env.qmd_files }}; do
+            echo "Rendering $file"
+            quarto render "$file" --to pdf
+          done
