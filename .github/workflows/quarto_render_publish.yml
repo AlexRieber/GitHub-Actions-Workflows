@@ -31,28 +31,22 @@ jobs:
           # Send responses one by one using sequential echo commands
           { echo ""; sleep 1; echo "yes"; sleep 1; echo "yes"; sleep 1; echo "no"; } | quarto install extension mikemahoney218/quarto-arxiv
           
-      - name: Detect Changed QMD Files
-        id: detect_changes
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        # By default, this compares the latest commit to the previous local commit.
+
+      - name: Render changed QMDs
         run: |
-          # Find common ancestor between HEAD and main
-          BASE_COMMIT=$(git merge-base origin/main HEAD)
-          echo "Base commit for comparison: $BASE_COMMIT"
+          # Capture all changed files
+          ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
 
-          # Gather changed files that match either QMD name
-          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT HEAD -- 'Testpaper.qmd' 'introduction.qmd' | tr '\n' ' ')
-
-          if [[ -n "$CHANGED_FILES" ]]; then
-            echo "Changed QMD files: $CHANGED_FILES"
-            echo "qmd_files=$CHANGED_FILES" >> $GITHUB_ENV
-          else
-            echo "No QMD changes detected."
-            echo "qmd_files=" >> $GITHUB_ENV
-          fi
-
-      - name: Render Changed QMD Files
-        if: env.qmd_files != ''
-        run: |
-          for file in ${{ env.qmd_files }}; do
-            echo "Rendering $file"
-            quarto render "$file" --to pdf
+          # Loop through them and render only the ones we want
+          for file in $ALL_CHANGED_FILES; do
+            if [[ "$file" == "paper/Testpaper.qmd" || "$file" == "paper/introduction.qmd" ]]; then
+              echo "Rendering $file..."
+              quarto render "$file" --to pdf
+            else
+              echo "Skipping $file"
+            fi
           done
