@@ -1,0 +1,55 @@
+---
+title: "Paper in PDF"
+format:
+  arxiv-pdf:
+    keep-tex: true  
+    linenumbers: false
+    doublespacing: false
+    runninghead: "A Preprint"
+  arxiv-html: default
+author:
+  - name: Jon Doe
+    affiliations:
+      - name: University X
+        department: Department 1
+    orcid: 
+    email: jon@doe.com
+  - name: Jane Smith
+    affiliations:
+      - name: University Y
+        department: Department 2
+    email: jane@smith.de
+abstract: |
+  This is the most important thing I will ever write.
+keywords: 
+  - template
+  - demo
+---
+
+# Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+# Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+This format hide chunks by default, but you can set `echo` option to `true` locally in the chunk:
+
+```{r}
+#| echo: true
+#| label: tbl-glm
+#| tbl-cap: "A table."
+
+# install.packages("broom")
+# install.packages("kableExtra")
+data("quine", package = "MASS")
+m_pois <- glm(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine, family = poisson)
+kableExtra::kable_styling(
+  kableExtra::kbl(broom::tidy(m_pois))
+)
+```
