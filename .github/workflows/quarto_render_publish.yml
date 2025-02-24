@@ -37,11 +37,11 @@ jobs:
         # By default, this compares the latest commit to the previous local commit.
 
       - name: Render changed QMDs
+        shell: bash  # <--- Tells GitHub to use Bash
         run: |
-          # Capture all changed files
           ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          echo "Changed files: $ALL_CHANGED_FILES"
 
-          # Loop through them and render only the ones we want
           for file in $ALL_CHANGED_FILES; do
             if [[ "$file" == "Testpaper.qmd" || "$file" == "Introduction.qmd" ]]; then
               echo "Rendering $file..."
