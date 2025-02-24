@@ -19,7 +19,12 @@ jobs:
       - name: Mark repository as safe
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
+          
+      - name: Install tinytex
+        run: |
+          R -e 'install.packages("tinytex", repos = "https://cran.rstudio.com")'
+          R -e 'tinytex::install_tinytex()'
+          
       - name: Render Testpaper.qmd
         run: |
           quarto render Testpaper.qmd --to pdf
