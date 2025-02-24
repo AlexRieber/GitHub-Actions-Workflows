@@ -1,0 +1,25 @@
+name: Render Testpaper PDF on Push
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  render_quarto:
+    runs-on: ubuntu-latest
+
+    container:
+      image: alexrieber/rocker-quarto-r:latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Mark repository as safe
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Render Testpaper.qmd
+        run: |
+          quarto render Testpaper.qmd --to pdf
