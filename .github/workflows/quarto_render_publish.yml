@@ -2,8 +2,8 @@ name: Render Testpaper PDF on Push
 
 on:
   push:
-    branches:
-      - main  
+    paths:
+      - 'Testpaper.qmd' #Trigger only when the paper changed
 
 jobs:
   render_quarto:
@@ -16,10 +16,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Mark repository as safe
+      - name: Install tinytex
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          R -e 'install.packages("tinytex", repos = "https://cran.rstudio.com")'
+          R -e 'tinytex::install_tinytex()'
 
+      - name: Install quarto-arxiv extension
+        run: |
+          # Send responses one by one using sequential echo commands
+          { echo ""; sleep 1; echo "yes"; sleep 1; echo "yes"; sleep 1; echo "no"; } | quarto install extension mikemahoney218/quarto-arxiv
+          
       - name: Render Testpaper.qmd
         run: |
           quarto render Testpaper.qmd --to pdf
