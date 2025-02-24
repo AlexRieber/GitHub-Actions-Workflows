@@ -43,7 +43,7 @@ jobs:
 
           # Loop through them and render only the ones we want
           for file in $ALL_CHANGED_FILES; do
-            if [[ "$file" == "paper/Testpaper.qmd" || "$file" == "paper/introduction.qmd" ]]; then
+            if [[ "$file" == "Testpaper.qmd" || "$file" == "introduction.qmd" ]]; then
               echo "Rendering $file..."
               quarto render "$file" --to pdf
             else
