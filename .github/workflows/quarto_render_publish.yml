@@ -16,14 +16,21 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Mark repository as safe
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # To install LaTeX to build PDF
+          tinytex: true
+      
+      - name: Install required fonts
+        run: sudo apt install lmodern
+
+      - name: Install quarto-arxiv extension
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          
-      - name: Install tinytex
-        run: |
-          R -e 'install.packages("tinytex", repos = "https://cran.rstudio.com")'
-          R -e 'tinytex::install_tinytex()'
+          # Send responses one by one using sequential echo commands
+          { echo ""; sleep 1; echo "yes"; sleep 1; echo "yes"; sleep 1; echo "no"; } | quarto install extension mikemahoney218/quarto-arxiv
           
       - name: Render Testpaper.qmd
         run: |
