@@ -38,8 +38,8 @@ jobs:
           BASE_COMMIT=$(git merge-base origin/main HEAD)
           echo "Base commit for comparison: $BASE_COMMIT"
 
-          # Gather changed files in 'paper/' that match either QMD name
-          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT HEAD -- 'paper/Testpaper.qmd' 'paper/introduction.qmd' | tr '\n' ' ')
+          # Gather changed files that match either QMD name
+          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT HEAD -- 'Testpaper.qmd' 'introduction.qmd' | tr '\n' ' ')
 
           if [[ -n "$CHANGED_FILES" ]]; then
             echo "Changed QMD files: $CHANGED_FILES"
