@@ -45,7 +45,7 @@ jobs:
           for file in $ALL_CHANGED_FILES; do
             if [[ "$file" == "Testpaper.qmd" || "$file" == "Introduction.qmd" ]]; then
               echo "Rendering $file..."
-              quarto render "$file" --to pdf
+              quarto render "$file" --to pdf --output paper_replication/${filename}.pdf
             else
               echo "Skipping $file"
             fi
